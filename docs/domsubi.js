@@ -1,4 +1,4 @@
-import { StreamSink, Operational, Cell, TimerSystem, TimerSystemImpl, Transaction, CellLoop } from './sodiumjs';
+import { StreamSink, Operational, Cell, TimerSystem, TimerSystemImpl, Transaction, CellLoop } from './sodiumjs.js';
 
 class jsxmlComponent {
     constructor(source, parent) {
