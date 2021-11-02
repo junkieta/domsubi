@@ -1,0 +1,11 @@
+node_modules
+
+# 外部ライブラリ用バンドルスクリプト
+build.ext.js
+
+# ビルド結果はgithubには不要
+dist
+
+# vscode設定ファイル
+.vscode
+
