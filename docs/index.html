@@ -47,8 +47,8 @@ contents.mount(targetNode);</pre>
             <p>実行結果:</p>
             <script type="module">
                 import {f} from "./f";
-                import {StreamSink as s} from "./sodiumjs";
-                import {jshtml as j} from "./domsubi.min";
+                import {StreamSink as s} from "./sodiumjs.js";
+                import {jshtml as j} from "./domsubi.js";
                 const txt = document.getElementById('clickCountText')
                 const t = document.getElementById('clickCount').querySelector('script');
                 f({ StreamSink: s, jshtml: j, targetNode: t }, txt);
