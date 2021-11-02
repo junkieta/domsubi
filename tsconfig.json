@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": [ "esnext", "dom" ],
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "rootDir": "src/",
+    "outDir": "dist/lib",
+    "baseUrl": ".",
+    "declaration": true,
+    "declarationDir": "dist/typings/"
+  },
+  "paths": {
+    "sodiumjs": ["node_modules/sodium-typescript/src/lib/Lib.ts"],
+    "typescript-collections": ["node_modules/typescript-collections/src/lib/index.ts"],
+  },
+  "exclude": [
+    "node_modules",
+    "es_modules",
+    "dist"
+  ],
+}
