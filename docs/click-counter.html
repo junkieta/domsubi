@@ -24,6 +24,8 @@
             import {StreamSink} from "./sodiumjs.js";
             import {jshtml} from "./domsubi.js";
 
+            const targetNode = document.getElementById('click-counter-sample');
+
             // クリックイベント取得用Stream
             const sClicked = new StreamSink();
             // クリックイベントをカウントするCell
