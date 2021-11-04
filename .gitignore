@@ -9,3 +9,5 @@ dist
 # vscode設定ファイル
 .vscode
 
+# テストのローカルウェブサーバー用スクリプト
+static_server.js
