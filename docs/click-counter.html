@@ -21,9 +21,8 @@
     <body>
         <header><h1>クリックカウンターのサンプル</h1></header>
         <script id="click-counter-sample" type="module">
-            import {f} from "./f.js";
-            import {StreamSink as s} from "./sodiumjs.js";
-            import {jshtml as j} from "./domsubi.js";
+            import {StreamSink} from "./sodiumjs.js";
+            import {jshtml} from "./domsubi.js";
 
             // クリックイベント取得用Stream
             const sClicked = new StreamSink();
