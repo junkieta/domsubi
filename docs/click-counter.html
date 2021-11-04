@@ -19,33 +19,34 @@
         </style>
     </head>
     <body>
-        <header>
-            <h1>クリックカウンターのサンプル</h1>
-        </header>
+        <header><h1>クリックカウンターのサンプル</h1></header>
         <script id="click-counter-sample" type="module">
             import {f} from "./f.js";
             import {StreamSink as s} from "./sodiumjs.js";
             import {jshtml as j} from "./domsubi.js";
 
-            const targetNode = document.getElementById('click-counter-sample');
-
+            // クリックイベント取得用Stream
             const sClicked = new StreamSink();
+            // クリックイベントをカウントするCell
             const countClicked = sClicked.accum(0, (u,n) => n + 1);
+            // クリック5回毎に"red", でなければ"black"を返すCell
             const varColor = countClicked.map((n) => n % 5 ? 'black' : 'red');
+            // click回数を表示するVAR要素
             const countClickedVar = {
                 var: countClicked,
                 $: {
                     style: {
-                        color: varColor,
-                        fontSize: 'x-large'
+                        color: varColor
                     }
                 }
             };
+            // 全体
             const contents = new jshtml([
-                { button: 'Click me!!', $: { onclick: sClicked } },
-                { p: ['You clicked a button ', countClickedVar, ' times.'] }
+                { button: 'クリックよろしく!!', $: { onclick: sClicked } },
+                { p: ['君は ', countClickedVar, ' 回クリックしている'] }
             ]);
             contents.mount(targetNode);
         </script>
+        <footer><address><a href="./">junkieta/domsubi example</a></address></footer>
     </body>
 </html>
