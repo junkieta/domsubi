@@ -1,6 +1,6 @@
 # domsubi example page
+[junkieta/domsubi](https://github.com/junkieta/domsubi)の作例紹介ページ。
 ## クリックカウンター
-
 ```javascript
 // クリックイベント取得用Stream
 const sClicked = new StreamSink();
@@ -22,6 +22,7 @@ const contents = new jshtml([
     { button: 'クリックよろしく!!', $: { onclick: sClicked } },
     { p: ['君は ', countClickedVar, ' 回クリックしている'] }
 ]);
+// マウントする
 contents.mount(targetNode);
 ```
 - [実行結果サンプルページ](./click-counter.html)
