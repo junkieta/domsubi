@@ -2,29 +2,8 @@ import {jsxml as _jsxml} from "./domsubi/jsxml";
 import {jshtml as _jshtml} from "./domsubi/jshtml";
 import {jsxmlVisitor} from "./domsubi/jsxmlVisitor";
 import {jshtmlVisitor} from "./domsubi/jshtmlVisitor";
-import {AnimationFrameTimerSystem} from "./domsubi/AnimationFrameTimerSystem"
 import {AttributesSource,EventStreamMap,NodeSource} from "./domsubi/types";
-import {StreamSink,Operational,Cell, Stream, TimerSystem, Transaction, CellLoop} from "sodiumjs";
-
-/**
- * 現在時刻から指定ミリ秒が経過するまで、0~1の範囲をサンプリングするStream
- */
-export function duration(sys: TimerSystem, ms:number) : Stream<number> & { end: Stream<number> } {
-    const start_t = sys.time.sample();
-    const end_t = start_t + ms;
-    return Transaction.run(() => {
-        const oAlarm = new CellLoop<number>();
-        const sAlarm = sys.at(oAlarm);
-        oAlarm.loop(sAlarm
-            .snapshot(sys.time, (t,now) => now < end_t ? now : t === end_t ? null : end_t)
-            .hold(start_t) as Cell<number>);
-        const sResult = sAlarm.map((t) => {
-            const _t = t - start_t;
-            return _t ? Math.min(_t / end_t-start_t, 1) : _t;
-        });
-        return Object.assign(sResult, { end: Operational.defer(sResult.filter((t) => t === 1)) })
-    })
-}
+import {StreamSink,Operational,Cell} from "sodiumjs";
 
 /**
  * ターゲットのイベントをStream化する。
@@ -85,4 +64,4 @@ const proxy_handler = {
 export const jsxml  = new Proxy(_jsxml, proxy_handler) as typeof _jsxml & ((s:NodeSource) => _jsxml);
 export const jshtml = new Proxy(_jshtml, proxy_handler) as typeof _jshtml & ((s:NodeSource) => _jshtml);
 
-export {jsxmlVisitor,jshtmlVisitor,AnimationFrameTimerSystem};
+export {jsxmlVisitor,jshtmlVisitor};
