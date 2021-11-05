@@ -1,11 +1,11 @@
 # domsubi
 ブラウザ側のDOM更新をFRPで処理するためのライブラリ。[sodium-typescript](https://github.com/SodiumFRP/sodium-typescript/)を利用する。
 ヴァーチャルDOM実装について、facebook-reactのJSXとは異なるjavascriptのオブジェクトリテラルを活かした記法(jshtml記法)を採用。
-
+## examples
+[domsubi example page](https://junkieta.github.io/domsubi/)にて、利用例を紹介している。
 なお名称のdomsubiは、DOMのおむすびという意味。sodium(塩)を核にしてDOMを管理するところから命名。
 ## jshtml記法について
 jshtml記法ではJavaScriptオブジェクトリテラルでDOMを記述する。入れ子構造をシンプルに扱えるので、FRP値をDOMに手軽に埋め込むことができる。原案となった制作者のページは既にないが、取り扱いの容易さから採用している。
-
 ### 要素の表現
 要素は`{ タグ: 内容 }`とすることで記述できる。属性を含む場合は、$をキーとして記述する。
 ```javascript
