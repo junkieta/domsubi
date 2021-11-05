@@ -34,7 +34,7 @@ export class jshtmlVisitor extends jsxmlVisitor {
         const {source,element,cssprop} = style;
         if(source instanceof Cell)
             this.incarnate(style)
-        else if(source === null || source === undefined)
+        else
             // 簡略構文がtypescriptではサポートされていないので、強引な型処理でチェックを通す
             element.style[cssprop as "color"] = source === null || source === undefined ? '' : '' + source;
     }
