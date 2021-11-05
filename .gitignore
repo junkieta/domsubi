@@ -1,9 +1,6 @@
 node_modules
 
-# 外部ライブラリ用バンドルスクリプト
-build.ext.js
-
-# ビルド結果はgithubには不要
+# ビルド結果
 dist
 
 # vscode設定ファイル
@@ -11,3 +8,7 @@ dist
 
 # テストのローカルウェブサーバー用スクリプト
 static_server.js
+
+# 外部ライブラリのバンドル
+src/bundle
+rollup.bundle.config.js
