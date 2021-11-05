@@ -1,3 +1,4 @@
+import pkg from './package.json';
 import typescript from 'rollup-plugin-typescript2';
 //import {nodeResolve} from '@rollup/plugin-node-resolve';
 import {terser} from 'rollup-plugin-terser';
@@ -10,7 +11,8 @@ export default [
         external: ['sodiumjs'],
 
         output: [
-            { file: "dist/domsubi.js", format: 'esm', sourcemap: true },
+            { file: pkg.main, format: 'cjs', sourcemap: true },
+            { file: pkg.module, format: 'esm', sourcemap: true },
             { file: 'dist/domsubi.min.js', format: 'esm', plugins: [terser({ module: true })] }
         ],
 
