@@ -1,11 +1,16 @@
 # domsubi
-ブラウザ側のDOM更新をFRPで処理するためのライブラリ。[sodium-typescript](https://github.com/SodiumFRP/sodium-typescript/)を利用する。
-ヴァーチャルDOM実装について、facebook-reactのJSXとは異なるjavascriptのオブジェクトリテラルを活かした記法(jshtml記法)を採用。
-## examples
-[domsubi example page](https://junkieta.github.io/domsubi/)にて、利用例を紹介している。
-なお名称のdomsubiは、DOMのおむすびという意味。sodium(塩)を核にしてDOMを管理するところから命名。
+ブラウザ側のDOM更新をFRPで処理するためのライブラリ。前提として[sodium-typescript](https://github.com/SodiumFRP/sodium-typescript/)を利用する。
+
+ヴァーチャルDOM実装でもあるが、facebook-reactのJSXとは異なるjavascriptのオブジェクトリテラルを活かした記法([jshtml記法](#jshtml%E8%A8%98%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6))を採用。
+
+名称はdomsubi = DOM-MUSUBI、DOMのおむすび。sodium(塩)を核にしてDOMを管理するところから。
+
+## 使用例
+[domsubi example page](https://junkieta.github.io/domsubi/)にて紹介。
+
 ## jshtml記法について
 jshtml記法ではJavaScriptオブジェクトリテラルでDOMを記述する。入れ子構造をシンプルに扱えるので、FRP値をDOMに手軽に埋め込むことができる。原案となった制作者のページは既にないが、取り扱いの容易さから採用している。
+
 ### 要素の表現
 要素は`{ タグ: 内容 }`とすることで記述できる。属性を含む場合は、$をキーとして記述する。
 ```javascript
@@ -15,6 +20,7 @@ jshtml記法ではJavaScriptオブジェクトリテラルでDOMを記述する�
 ```html
 <p title="Goodbye World">Hello World</p>
 ```
+
 ### イベントハンドラの表現
 属性値としてイベントハンドラが想定される個所では、Function,EventListenerObjectを指定できる。
 ```javascript
@@ -26,6 +32,7 @@ jshtml記法ではJavaScriptオブジェクトリテラルでDOMを記述する�
   }
 }
 ```
+
 ### インラインスタイルの表現
 style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/API/CSSStyleDeclaration)にならい、名前付きプロパティをObjectで表現することができる。
 ```javascript
@@ -38,6 +45,7 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
   }
 }
 ```
+
 ### カスタムデータ属性の表現
 [data-*属性](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/dataset)については、datasetプロパティにオブジェクトを設定することでも表現できる。
 ```javascript
@@ -49,6 +57,7 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
   }
 }
 ```
+
 ### 複数ノードの表現
 複数のノードを持つ場合はArrayを使えばよい。
 ```javascript
@@ -58,6 +67,7 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
 ```html
 <p><em>H</em>ello World</p>
 ```
+
 ## FRP値からノードを生成する
 jshtml記法の中で、DOMにFRPを取り込む時は[sodium/Cell](https://github.com/SodiumFRP/sodium-typescript/blob/master/src/lib/sodium/Cell.ts)を用いればよい。
 ```javascript
@@ -83,18 +93,22 @@ const paragraph = new jshtml({ p: 'Hello World', $: { onmouseout: sMouseout } })
 paragraph.mountAsContents(document.body);
 sMouseout.listen((e) => console.log('mouseout from paragraph'));
 ```
+
 ## ノードからFRP値を生成する
 ヘルパー関数群を用いて生成済みのノードからFRP値を取得できる。
+
 ### events - DOMイベントをStream化する
 ```javascript
 const sKeydown = events(document).keydown; // Stream<KeyboardEvent>
 sKeydown.listen((e) => console.log(e)); // KeyboardEvent
 ```
+
 ### mutations - DOMの変異をStream化する
 ```javascript
 const sMutateChild = mutations(document.body, { childList: true }); // Stream<MutationRecord>
 sMutateChild.listen((r) => console.log(r)); // MutationRecord
 ```
+
 ### attributes - 属性値のCellを取得する
 ```javascript
 const attrCell = attributes(document.body).id; // Cell<string>
