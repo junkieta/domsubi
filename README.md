@@ -15,10 +15,7 @@ jshtml記法ではJavaScriptオブジェクトリテラルでDOMを記述する�
 要素は`{ タグ: 内容 }`とすることで記述できる。属性を含む場合は、$をキーとして記述する。
 ```javascript
 { p: 'Hello World', $: { title: 'Goodbye World' } }
-```
-上記jshtmlは以下のように変換される。
-```html
-<p title="Goodbye World">Hello World</p>
+// => <p title="Goodbye World">Hello World</p>
 ```
 
 ### イベントハンドラの表現
@@ -44,6 +41,7 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
     }
   }
 }
+// => <p style="background-color: white;">Hello World</p>
 ```
 
 ### カスタムデータ属性の表現
@@ -56,16 +54,14 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
     }
   }
 }
+// => <p data-example-message="Goodbye World">Hello World</p>
 ```
 
 ### 複数ノードの表現
 複数のノードを持つ場合はArrayを使えばよい。
 ```javascript
 { p: [{ em:'H' },'ello World'] }
-```
-上記jshtmlは以下のように変換される。
-```html
-<p><em>H</em>ello World</p>
+// <p><em>H</em>ello World</p>
 ```
 
 ## FRP値からノードを生成する
