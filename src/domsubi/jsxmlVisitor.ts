@@ -27,7 +27,7 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
 
     incarnate(c: jsxmlComponent) {
         const cell = c.source as Cell<DOMSource>;
-        this._binding.set(c, Operational.updates(cell).listen((v) => this.enqueue([c, v, deepSample(cell)])));
+        this._binding.set(c, Operational.updates(cell).listen((v) => this.enqueue([c, v, deepSample(cell.sample())])));
         this._lineage.push(c);
         c.nest(cell.sample()).accept(this);
         this._lineage.pop();
@@ -195,7 +195,6 @@ function validateEventListenable(value: unknown): boolean {
     return !!(value) && (typeof value === "function" || typeof (<EventListenerObject>value).handleEvent === 'function');
 }
 
-function deepSample<V>(c: Cell<V> | Cell<Cell<V>>): V {
-    const v = c.sample();
-    return v instanceof Cell ? deepSample(v) : v;
+function deepSample<V>(v: V | Cell<V>): V {
+    return v instanceof Cell ? deepSample(v.sample()) : v;
 }
