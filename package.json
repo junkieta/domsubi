@@ -9,15 +9,12 @@
   "main": "./dist/domsubi.cjs.js",
   "scripts": {
     "build": "tsc --build",
-    "clean": "tsc --build --clean",
-    "esbuild": "node build --define:process.env.NODE_ENV=\\\"development\\\"",
-    "esbuild:ext": "node build.ext"
+    "clean": "tsc --build --clean"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.0.6",
-    "esbuild": "^0.13.4",
-    "rollup": "^2.58.0",
+    "rollup": "^2.59.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.4.3"
