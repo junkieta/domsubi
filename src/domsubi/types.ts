@@ -233,7 +233,7 @@ export type DocumentFragmentSource =
     NodeSource[];
 
 export type NodeSource =
-    Node | TextNodeSource | DocumentFragmentSource | ElementSource | Stream<NodeSource> | Cell<NodeSource> | jsxml;
+    Node | TextNodeSource | DocumentFragmentSource | ElementSource | Stream<NodeSource> | Cell<NodeSource>;
 
 export type AttrValue =
     DOMStringSource | string[] | DOMEventHandler[keyof DOMEventHandler] | StyleSource | DatasetSource | Promise<AttrValue> | Cell<AttrValue>;
