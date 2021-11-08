@@ -1,5 +1,5 @@
 {
-  "name": "@junkieta/domsubi",
+  "name": "domsubi",
   "version": "0.0.1",
   "description": "A Vertual-DOM Library for JavaScript",
   "author": {
