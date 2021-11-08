@@ -5,18 +5,18 @@
  * junkieta/domsubi is licensed under the MIT License(https://github.com/junkieta/domsubi/blob/main/LICENSE)
  * 
  * Includes SodiumFRP/sodium-typescript
- * Copyright (c) Stephen Blackheath
  * https://github.com/SodiumFRP/sodium-typescript/
+ * Copyright (c) Stephen Blackheath
  * SodiumFRP/sodium-typescript is licensed under BSD 3-Clause(https://opensource.org/licenses/BSD-3-Clause)
  * 
  * Includes basarat/typescript-collections(sodium-typescript dependencies)
- * Copyright (c) 2010-2017 Tomasz Ciborski
  * https://github.com/basarat/typescript-collections
+ * Copyright (c) 2010-2017 Tomasz Ciborski
  * basarat/typescript-collections is licensed under the MIT License(https://github.com/basarat/typescript-collections/blob/release/LICENSE)
  * 
  * Includes sanctuary-js/sanctuary-type-classes(sodium-typescript dependencies)
- * Copyright (c) 2020 Sanctuary
  * https://github.com/sanctuary-js/sanctuary-type-classes
+ * Copyright (c) 2020 Sanctuary
  * sanctuary-js/sanctuary-type-classes is licensed under the MIT License(https://github.com/sanctuary-js/sanctuary-type-classes/blob/master/LICENSE)
  */
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -7884,38 +7884,6 @@ class jsxmlNode extends jsxmlComponent {
     }
 }
 
-class jsxml$1 {
-    constructor(s) {
-        this.placeholder = new Comment('jshtml-placeholder');
-        this.source = s;
-    }
-    createVisitor() {
-        return new this.constructor.visitorConstructor();
-    }
-    map(f) {
-        return new this.constructor(f(this.source));
-    }
-    wrap(tag, attrs) {
-        return new this.constructor({ [tag]: this.source, $: attrs });
-    }
-    mount(n) {
-        new jsxmlNode(n, this.source).accept(this.createVisitor());
-    }
-    mountAsContents(n) {
-        const root = n.hasChildNodes()
-            ? new jsxmlNode([n.firstChild, n.lastChild], this.source)
-            : new jsxmlNode(n.appendChild(this.placeholder.cloneNode(false)), this.source);
-        root.accept(this.createVisitor());
-    }
-    appendTo(n) {
-        this.mount(n.appendChild(this.placeholder.cloneNode(false)));
-    }
-    prependTo(n) {
-        this.mount(n.insertBefore(this.placeholder.cloneNode(false), n.firstChild));
-    }
-}
-jsxml$1.visitorConstructor = jsxmlVisitor;
-
 class jsxmlVisitor {
     constructor() {
         this._binding = new Map();
@@ -7976,8 +7944,6 @@ class jsxmlVisitor {
     buildNode(source, parent) {
         if (source instanceof Cell)
             this.incarnate(new jsxmlNode(parent.appendChild(new Comment('')), source, this.context));
-        else if (source instanceof jsxml$1)
-            this.buildNode(source.source, parent);
         else if (source instanceof Node)
             parent.append(source);
         else if (Object(source) !== source)
@@ -8165,6 +8131,38 @@ function camelToHyphenSeparated(str: string) {
 function hyphenSeparatedToCamelize(str) {
     return str.replace(/-[a-z]/g, (s) => s.charAt(1).toUpperCase());
 }
+
+class jsxml$1 {
+    constructor(s) {
+        this.placeholder = new Comment('jshtml-placeholder');
+        this.source = s;
+    }
+    createVisitor() {
+        return new this.constructor.visitorConstructor();
+    }
+    map(f) {
+        return new this.constructor(f(this.source));
+    }
+    wrap(tag, attrs) {
+        return new this.constructor({ [tag]: this.source, $: attrs });
+    }
+    mount(n) {
+        new jsxmlNode(n, this.source).accept(this.createVisitor());
+    }
+    mountAsContents(n) {
+        const root = n.hasChildNodes()
+            ? new jsxmlNode([n.firstChild, n.lastChild], this.source)
+            : new jsxmlNode(n.appendChild(this.placeholder.cloneNode(false)), this.source);
+        root.accept(this.createVisitor());
+    }
+    appendTo(n) {
+        this.mount(n.appendChild(this.placeholder.cloneNode(false)));
+    }
+    prependTo(n) {
+        this.mount(n.insertBefore(this.placeholder.cloneNode(false), n.firstChild));
+    }
+}
+jsxml$1.visitorConstructor = jsxmlVisitor;
 
 class jshtml$1 extends jsxml$1 {
     mountAsShadow(e, init) {

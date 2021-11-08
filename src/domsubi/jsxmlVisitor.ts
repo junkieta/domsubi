@@ -5,7 +5,6 @@ import { jsxmlAttributes } from "./jsxmlAttributes";
 import { jsxmlNode } from "./jsxmlNode";
 import { DOMSource, ElementSource, AttributesSource, AttrValue } from "./types";
 import { jsxmlComponentVisitor } from "./jsxmlComponentVisitor";
-import { jsxml } from "./jsxml";
 
 type UPDATE_INFO = [jsxmlComponent, DOMSource, DOMSource];
 
@@ -80,8 +79,6 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     buildNode(source: DOMSource, parent: ParentNode) {
         if (source instanceof Cell)
             this.incarnate(new jsxmlNode(parent.appendChild(new Comment('')), source, this.context));
-        else if (source instanceof jsxml)
-            this.buildNode(source.source, parent);
         else if (source instanceof Node)
             parent.append(source);
         else if (Object(source) !== source)
