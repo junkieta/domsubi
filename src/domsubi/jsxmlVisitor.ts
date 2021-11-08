@@ -78,10 +78,10 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     }
 
     buildNode(source: DOMSource, parent: ParentNode) {
-        if (source instanceof jsxml)
-            this.buildNode(source.source, parent);
-        else if (source instanceof Cell)
+        if (source instanceof Cell)
             this.incarnate(new jsxmlNode(parent.appendChild(new Comment('')), source, this.context));
+        else if (source instanceof jsxml)
+            this.buildNode(source.source, parent);
         else if (source instanceof Node)
             parent.append(source);
         else if (Object(source) !== source)

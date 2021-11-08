@@ -7,7 +7,7 @@ dist
 .vscode
 
 # テストのローカルウェブサーバー用スクリプト
-static_server.js
+docs/static_server.js
 
 # 外部ライブラリのバンドル
 src/bundle

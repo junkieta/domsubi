@@ -1,19 +1,25 @@
 {
-  "name": "domsubi",
+  "name": "@junkieta/domsubi",
   "version": "0.0.1",
-  "description": "A Vertual-DOM Builder Library for JavaScript",
+  "description": "A Vertual-DOM Library for JavaScript",
   "author": {
-    "name": "junkieta"
+    "name": "junkieta",
+    "email": "webmaster@junkieta.net"
   },
-  "module": "./dist/domsubi.js",
+  "module": "./dist/domsubi.esm.js",
   "main": "./dist/domsubi.cjs.js",
+  "typings": "./dist/typings/Lib.d.ts",
   "scripts": {
-    "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "rimraf ./dist",
+    "build": "rollup -c",
+    "build:typings": "tsc --emitDeclarationOnly true",
+    "build:dist": "npm run clean && npm run build && npm run build:typings",
+    "build:browser": "rollup --config rollup.bundle.config.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.0.6",
+    "rimraf": "^3.0.2",
     "rollup": "^2.59.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
@@ -21,5 +27,21 @@
   },
   "dependencies": {
     "sodiumjs": "^3.0.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junkieta/domsubi.git"
+  },
+  "keywords": [
+    "dom",
+    "virtual-dom",
+    "functional-reactive",
+    "sodium",
+    "typescript"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/junkieta/domsubi/issues"
+  },
+  "homepage": "https://github.com/junkieta/domsubi#readme"
 }
