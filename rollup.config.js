@@ -11,7 +11,7 @@ export default [
         output: [
             { file: pkg.main, format: 'cjs', sourcemap: true },
             { file: pkg.module, format: 'esm', sourcemap: true },
-            { file: 'dist/domsubi.js', format: 'esm', plugins: [terser({ module: true })] }
+            { file: 'dist/domsubi.min.js', format: 'esm', sourcemap: true, plugins: [terser({ module: true })] }
         ],
 
         plugins: [

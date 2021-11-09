@@ -1,0 +1,20 @@
+[{
+    "name": "SodiumFRP/sodium-typescript",
+    "homepage": "https://github.com/SodiumFRP/sodium-typescript/",
+    "copy": "Copyright (c) 2012-2015 Stephen Blackheath and Anthony Jones",
+    "license": "BSD 3-Clause(https://opensource.org/licenses/BSD-3-Clause)",
+    "dependencies": [
+        {
+            "name": "basarat/typescript-collections",
+            "homepage": "https://github.com/basarat/typescript-collections",
+            "copy": "Copyright (c) 2010-2017 Tomasz Ciborski",
+            "license": "MIT"
+        },
+        {
+            "name": "sanctuary-js/sanctuary-type-classes",
+            "homepage": "https://github.com/sanctuary-js/sanctuary-type-classes",
+            "copy": "Copyright (c) 2020 Sanctuary",
+            "license": "MIT"
+        }
+    ]
+}]

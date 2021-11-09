@@ -5,10 +5,7 @@ dist
 
 # vscode設定ファイル
 .vscode
+*.code-workspace
 
 # テストのローカルウェブサーバー用スクリプト
 docs/static_server.js
-
-# 外部ライブラリのバンドル
-src/bundle
-rollup.bundle.config.js

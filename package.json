@@ -13,8 +13,8 @@
     "clean": "rimraf ./dist",
     "build": "rollup -c",
     "build:typings": "tsc --emitDeclarationOnly true",
-    "build:dist": "npm run clean && npm run build && npm run build:typings",
-    "build:browser": "rollup --config rollup.bundle.config.js"
+    "build:dist": "npm run clean && npm run build && npm run build:bundle && npm run build:typings",
+    "build:bundle": "rollup --config rollup.bundle.config.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
