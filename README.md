@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/domsubi.svg)](https://badge.fury.io/js/domsubi)
+[![Downloads](http://img.shields.io/npm/dm/domsubi.svg)](https://npmjs.org/package/domsubi)
+
 # domsubi
 ブラウザ側のDOM更新をFRPで処理するためのライブラリ。前提として[sodium-typescript](https://github.com/SodiumFRP/sodium-typescript/)を利用する。
 
