@@ -16,27 +16,30 @@ const my_license = {
 
 const license_text = "/*!\n" + create_license_text(my_license) + " */";
 
-const output_min_files = [
-    'docs/domsubi.min.js',
-    'dist/domsubi.min.js'
-]
- 
 export default [
     {
         input: 'src/bundle.ts',
 
-        output: [{
-            file: 'dist/domsubi.js',
-            format: 'esm',
-            sourcemap: true,
-            banner: license_text
-        }].concat(output_min_files.map((f) => ({
-            file: f,
-            format: 'esm',
-            sourcemap: true,
+        output: [
+            {
+                name: 'domsubi',
+                globals: { sodiumjs: 'Sodium' },
+                file: 'dist/domsubi.umd.js',
+                format: 'umd',
+            },
+            {
+                file: 'dist/domsubi.min.js',
+                format: 'esm',
+            },
+            {
+                file: 'docs/domsubi.min.js',
+                format: 'esm',
+            }
+        ].map((o) => Object.assign({
             plugins: [terser({ module: true })],
+            sourcemap: true,
             banner: license_text
-        }))),
+        },o)),
 
         plugins: [
             nodeResolve({
