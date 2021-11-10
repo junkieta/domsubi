@@ -1,5 +1,5 @@
 /*!
- * domsubi v0.0.1
+ * domsubi v0.0.11
  * https://github.com/junkieta/domsubi#readme
  * Copyright (c) 2021 junkieta
  * License: MIT
