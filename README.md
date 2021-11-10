@@ -5,6 +5,26 @@
 
 名称はdomsubi = DOM-MUSUBI、DOMのおむすび。sodium(塩)を核にしてDOMを管理するところから。
 
+## インストール
+### umd(依存ライブラリを含めたバンドル版)
+`domsubi`がグローバル変数になる。
+```html
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/domsubi/dist/domsubi.umd.js"></script>
+```
+### esm(依存ライブラリを含めたバンドル版)
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/domsubi/dist/domsubi.min.js"></script>
+```
+### esm(別途sodiumjsのモジュール版のインポートが必要)
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/domsubi/dist/domsubi.esm.js"></script>
+```
+### npm
+```bash
+$> npm install domsubi
+$> npm install -g domsubi
+```
+
 ## 使用例
 [domsubi example page](https://junkieta.github.io/domsubi/)にて紹介。
 
