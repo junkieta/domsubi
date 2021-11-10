@@ -68,7 +68,7 @@ style属性は[CSSStyleDeclaration](https://developer.mozilla.org/ja/docs/Web/AP
 ```
 
 ### カスタムデータ属性の表現
-[data-*属性](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/dataset)については、datasetプロパティにオブジェクトを設定することでも表現できる。
+[data-*属性](https://developer.mozilla.org/ja/docs/Web/API/HTMLElement/dataset)については、datasetプロパティのObjectで表現できる。
 ```javascript
 { p: 'Hello World',
   $: {
