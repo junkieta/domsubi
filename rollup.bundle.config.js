@@ -28,11 +28,13 @@ export default [
                 format: 'umd',
             },
             {
-                file: 'dist/domsubi.min.js',
-                format: 'esm',
+                name: 'domsubi',
+                globals: { sodiumjs: 'Sodium' },
+                file: 'docs/domsubi.umd.js',
+                format: 'umd',
             },
             {
-                file: 'docs/domsubi.min.js',
+                file: 'dist/domsubi.min.js',
                 format: 'esm',
             }
         ].map((o) => Object.assign({
