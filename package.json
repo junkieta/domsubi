@@ -1,6 +1,6 @@
 {
   "name": "domsubi",
-  "version": "0.0.1",
+  "version": "0.0.11",
   "description": "A Virtual-DOM Library for JavaScript",
   "author": {
     "name": "junkieta",
