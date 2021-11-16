@@ -33,7 +33,7 @@ export class jshtmlVisitor extends jsxmlVisitor {
     visitStyle(style: jshtmlInlineStyleRule) {
         const {source,element,cssprop} = style;
         if(source instanceof Cell)
-            this.incarnate(style)
+            this.visitCell(style)
         else
             // 簡略構文がtypescriptではサポートされていないので、強引な型処理でチェックを通す
             element.style[cssprop as "color"] = source === null || source === undefined ? '' : '' + source;
@@ -42,7 +42,7 @@ export class jshtmlVisitor extends jsxmlVisitor {
     visitDataset(data: jshtmlDatasetValue) {
         const {source,dataname,element} = data;
         if (source instanceof Cell)
-            this.incarnate(data);
+            this.visitCell(data);
         else if(source === null || source === undefined)
             delete element.dataset[hyphenSeparatedToCamelize(dataname)];
         else

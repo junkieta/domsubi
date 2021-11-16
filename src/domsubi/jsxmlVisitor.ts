@@ -10,83 +10,70 @@ type UPDATE_INFO = [jsxmlComponent, DOMSource, DOMSource];
 
 export class jsxmlVisitor implements jsxmlComponentVisitor {
 
-    private _lineage: jsxmlComponent[];
-    private _binding: Map<jsxmlComponent, Function>;
-    private _updates: UPDATE_INFO[];
+    /**
+     * ガベージコレクションの管理用。
+     */
+    private _binding : Map<jsxmlComponent, Function>;
+
+    /**
+     * componentの入れ子状況
+     */
+    private _lineage: jsxmlComponent[] = [];
+    
+    /**
+     * listenで取得する更新情報の格納場所。requestAnimationFrameで一括処理する。
+     */
+    private _updates: UPDATE_INFO[] = [];
+
+    constructor() {
+        this._binding = new Map();
+    }
 
     get context() {
         return this._lineage[this._lineage.length - 1];
     }
 
-    constructor() {
-        this._binding = new Map();
-        this._updates = [];
-        this._lineage = [];
-    }
-
-    incarnate(c: jsxmlComponent) {
+    visitCell(c: jsxmlComponent) {
         const cell = c.source as Cell<DOMSource>;
-        this._binding.set(c, Operational.updates(cell).listen((v) => this.enqueue([c, v, deepSample(cell.sample())])));
+        this._binding.set(c, Operational.updates(cell).listen((v) => this.enqueue([c, v, deepSample(cell)])));
         this._lineage.push(c);
         c.nest(cell.sample()).accept(this);
         this._lineage.pop();
     }
-
-    /* sodiumのガベージコレクションと整合性がとれるならアップデートイベントをmergeしてから更新にしたいが...
-    end() {
-        const merged = Array.from(this._bindings.keys())
-            .map((c) => Operational.updates((c.source as Cell<DOMSource>)).mapTo([c]))
-            .reduce((a,b) =>
-                a.merge(b, (a,[b]) => a.some((a) => a.isAncestorOf(b))
-                    ? a
-                    : a.filter((a) => !b.isAncestorOf(a)).concat(b)))
-            .once();
-        
-        Operational
-            .defer(merged)
-            .listen((updated) => {
-                updated.forEach((c) => this.garbageCollect(c));
-                updated.forEach((c) => c.accept(this))
-            });
-    }
-    */
 
     enqueue(i: UPDATE_INFO) {
         if (this._updates.push(i) === 1) requestAnimationFrame(() => this.dequeue());
     }
 
     dequeue() {
-        const u = this._updates;
-        while (u.length) {
-            u.splice(0)
-                .filter(([a], i, q) => q.every(([b]) => a === b || !b.isAncestorOf(a)))
-                .forEach(([ctx, v]) => {
-                    this.garbageCollect(ctx);
-                    ctx.nest(v).accept(this);
-                })
-        }
+        this._updates.splice(0)
+            .filter(([a], i, q) => q.every(([b]) => a === b || !b.isAncestorOf(a)))
+            .forEach(([ctx, v]) => {
+                this.garbageCollect(ctx);
+                ctx.nest(v).accept(this);
+            });
     }
 
     garbageCollect(ctx: jsxmlComponent) {
         Array.from(this._binding.keys())
             .filter((that) => ctx.isAncestorOf(that))
             .forEach((that) => {
-                this._binding.get(that) ?? (void 0);
+                this._binding.get(that)!(void 0);
                 this._binding.delete(that)
             })
     }
 
-    buildNode(source: DOMSource, parent: ParentNode) {
-        if (source instanceof Cell)
-            this.incarnate(new jsxmlNode(parent.appendChild(new Comment('')), source, this.context));
-        else if (source instanceof Node)
-            parent.append(source);
-        else if (Object(source) !== source)
-            parent.append(new Text(source === undefined || source === null ? '' : source + ''));
-        else if (Array.isArray(source))
-            source.forEach((s) => this.buildNode(s, parent));
+    buildNode(s: DOMSource, p: ParentNode) {
+        if (s instanceof Cell)
+            this.visitCell(new jsxmlNode(p.appendChild(new Comment('jsxml-placeholder')), s, this.context));
+        else if (s instanceof Node)
+            p.append(s);
+        else if (Object(s) !== s)
+            p.append(new Text(s === undefined || s === null ? '' : s + ''));
+        else if (Array.isArray(s))
+            s.forEach((s) => this.buildNode(s, p));
         else
-            this.buildElement(source as ElementSource, parent);
+            this.buildElement(s as ElementSource, p);
     }
 
     buildElement(source: ElementSource, p: ParentNode) {
@@ -102,39 +89,34 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     }
 
     visitNode(o: jsxmlNode): void {
-        const ref = o.reference.slice(0);
-        const n = ref[0];
-        const doc = n.ownerDocument as Document;
+        const [a,b] = o.reference.slice(0);
+        const doc = a.ownerDocument as Document;
         const df = doc.createDocumentFragment();
+
         this.buildNode(o.source, df);
         // リファレンス更新
         o.reference.splice(0,2, ...(df.childNodes.length === 2 ? [df.firstChild,df.lastChild] : [df.firstChild]) as Node[]);
+
+        if(!b) a.parentNode!.replaceChild(df, a);
+
         // DOM更新(Document接続済み)
-        if (ref.every((n) => n.isConnected)) {
+        else if (a.isConnected) {
             const r = new Range();
-            if(ref.length === 2) {
-                r.setStartBefore(n);
-                r.setEndAfter(ref[1]);
-            } else {
-                r.selectNode(n)
-            }
+            r.setStartBefore(a);
+            r.setEndAfter(b);
             const o = r.endOffset;
             r.insertNode(df);
             r.setStart(r.startContainer, r.startOffset + r.endOffset - o);
             r.deleteContents();
         }
+
         // DOM更新(Document接続なし)
         else {
-            const parent = n.parentNode;
-            if (!parent) return;
-            if (!ref[1]) {
-                parent.replaceChild(df, n);
-            } else {
-                parent.insertBefore(df, n);
-                while (n.nextSibling && n.nextSibling !== ref[1]) parent.removeChild(n.nextSibling);
-                parent.removeChild(n);
-                parent.removeChild(ref[1]);
-            }
+            const parent = a.parentNode; if (!parent) return;
+            parent.insertBefore(df, a);
+            while (a.nextSibling && a.nextSibling !== b) parent.removeChild(a.nextSibling);
+            parent.removeChild(a);
+            parent.removeChild(b);
         }
 
         
@@ -143,7 +125,7 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     visitAttributes(attrs: jsxmlAttributes) {
         const source = attrs.source;
         if (source instanceof Cell) {
-            this.incarnate(attrs);
+            this.visitCell(attrs);
         } else {
             type V = { [key: string]: AttrValue; };
             const elm = attrs.element;
@@ -158,7 +140,7 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
         const { element, name, source, prevValue } = attr;
 
         if (source instanceof Cell) {
-            this.incarnate(attr);
+            this.visitCell(attr);
         }
 
         else if (/^on./.test(name)) {
@@ -179,6 +161,11 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
                 ? source.filter(Boolean).join(" ")
                 : '' + source;
 
+    }
+
+    detach() {
+        Array.from(this._binding.values()).forEach((v) => v());
+        this._binding.clear();
     }
 
 }

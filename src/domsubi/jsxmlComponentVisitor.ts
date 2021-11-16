@@ -6,4 +6,5 @@ export interface jsxmlComponentVisitor {
     visitNode(n:jsxmlNode) : void;
     visitAttributes(a:jsxmlAttributes) : void;    
     visitAttr(a:jsxmlAttr) : void;
+    detach(): void;
 }

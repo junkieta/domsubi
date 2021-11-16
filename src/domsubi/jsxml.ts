@@ -17,41 +17,41 @@ export class jsxml {
     protected static visitorConstructor : jsxmlVisitorConstructor = jsxmlVisitor;
 
     source: NodeSource
-    private placeholder = new Comment('jshtml-placeholder')
 
     constructor(s: NodeSource) {
         this.source = s;
     }
 
-    protected createVisitor<T extends jsxml>() {
-        return new (this.constructor as jsxmlConstructor<T>).visitorConstructor()
+    map(f: (s:NodeSource) => NodeSource) {
+        return new (this.constructor as jsxmlConstructor<typeof this>)(f(this.source));
     }
 
-    map<T extends jsxml>(f: (s:NodeSource) => NodeSource) : T {
-        return new (this.constructor as jsxmlConstructor<T>)(f(this.source));
+    wrap(tag:string, attrs?: AttributesSource) {
+        return new (this.constructor as jsxmlConstructor<typeof this>)({ [tag]: this.source, $: attrs })
     }
 
-    wrap<T extends jsxml>(tag:string, attrs?: AttributesSource) : T {
-        return new (this.constructor as jsxmlConstructor<T>)({ [tag]: this.source, $: attrs })
+    protected _mount(n: jsxmlNode) {
+        const v = new (this.constructor as jsxmlConstructor<typeof this>).visitorConstructor()
+        n.accept(v);
+        return v.detach.bind(v)
     }
 
     mount(n: Node) {
-        new jsxmlNode(n, this.source).accept(this.createVisitor());
+        return this._mount(new jsxmlNode(n, this.source))
     }
 
     mountAsContents(n: Node) {
-        const root = n.hasChildNodes()
+        return this._mount(n.hasChildNodes()
             ? new jsxmlNode([n.firstChild,n.lastChild] as [Node,Node], this.source)
-            : new jsxmlNode(n.appendChild(this.placeholder.cloneNode(false)), this.source)
-        root.accept(this.createVisitor());
+            : new jsxmlNode(n.appendChild(new Comment('jsxml-placeholder')), this.source))
     }
 
     appendTo(n: Node) {
-        this.mount(n.appendChild(this.placeholder.cloneNode(false)));
+        return this.mount(n.appendChild(new Comment('jsxml-placeholder')));
     }
 
     prependTo(n: Node) {
-        this.mount(n.insertBefore(this.placeholder.cloneNode(false), n.firstChild));
+        return this.mount(n.insertBefore(new Comment('jsxml-placeholder'), n.firstChild));
     }
 
 
