@@ -1,32 +1,30 @@
 import { jsxmlComponent } from "./jsxmlComponent";
 import { jsxmlAttr } from "./jsxmlAttr";
-import { Cell, Operational } from "sodiumjs";
+import { Cell, Operational, Stream, lambda1 } from "sodiumjs";
 import { jsxmlAttributes } from "./jsxmlAttributes";
 import { jsxmlNode } from "./jsxmlNode";
 import { DOMSource, ElementSource, AttributesSource, AttrValue } from "./types";
 import { jsxmlComponentVisitor } from "./jsxmlComponentVisitor";
 
-type UPDATE_INFO = [jsxmlComponent, DOMSource, DOMSource];
-
 export class jsxmlVisitor implements jsxmlComponentVisitor {
-
-    /**
-     * ガベージコレクションの管理用。
-     */
-    private _binding : Map<jsxmlComponent, Function>;
 
     /**
      * componentの入れ子状況
      */
     private _lineage: jsxmlComponent[] = [];
-    
-    /**
-     * listenで取得する更新情報の格納場所。requestAnimationFrameで一括処理する。
-     */
-    private _updates: UPDATE_INFO[] = [];
 
+    /**
+     * Cellをソースに持つcomponentの配列
+     */
+    private _listening = [] as jsxmlComponent[];
+
+    /**
+     * Stream::listenの戻り値。
+     */
+    private _unlisten : Function = () => void 0;
+    
     constructor() {
-        this._binding = new Map();
+        this._listening = [];
     }
 
     get context() {
@@ -34,33 +32,18 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     }
 
     visitCell(c: jsxmlComponent) {
-        const cell = c.source as Cell<DOMSource>;
-        this._binding.set(c, Operational.updates(cell).listen((v) => this.enqueue([c, v, deepSample(cell)])));
+        this._unlisten();
+        this._listening.push(c);
         this._lineage.push(c);
-        c.nest(cell.sample()).accept(this);
+        c.nest((c.source as Cell<DOMSource>).sample()).accept(this);
         this._lineage.pop();
-    }
+        
+        if(!this._lineage.length) this._unlisten = merge_listening(this._listening).listen((updated) => {
+            this._unlisten();
+            this._listening = this._listening.filter((_c) => !updated.some((u) => u.isAncestorOf(_c) || u === _c));
+            updated.forEach((c) => c.accept(this));
+        });
 
-    enqueue(i: UPDATE_INFO) {
-        if (this._updates.push(i) === 1) requestAnimationFrame(() => this.dequeue());
-    }
-
-    dequeue() {
-        this._updates.splice(0)
-            .filter(([a], i, q) => q.every(([b]) => a === b || !b.isAncestorOf(a)))
-            .forEach(([ctx, v]) => {
-                this.garbageCollect(ctx);
-                ctx.nest(v).accept(this);
-            });
-    }
-
-    garbageCollect(ctx: jsxmlComponent) {
-        Array.from(this._binding.keys())
-            .filter((that) => ctx.isAncestorOf(that))
-            .forEach((that) => {
-                this._binding.get(that)!(void 0);
-                this._binding.delete(that)
-            })
     }
 
     buildNode(s: DOMSource, p: ParentNode) {
@@ -164,8 +147,8 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
     }
 
     detach() {
-        Array.from(this._binding.values()).forEach((v) => v());
-        this._binding.clear();
+        this._unlisten();
+        this._listening = [];
     }
 
 }
@@ -179,6 +162,25 @@ function validateEventListenable(value: unknown): boolean {
     return !!(value) && (typeof value === "function" || typeof (<EventListenerObject>value).handleEvent === 'function');
 }
 
-function deepSample<V>(v: V | Cell<V>): V {
-    return v instanceof Cell ? deepSample(v.sample()) : v;
+/**
+ * アップデートをmergeしたStreamを返す
+ * @param components 
+ */
+function merge_listening(components: jsxmlComponent[]) {
+    
+    return Operational
+        .defer(components
+            .map((c) => Operational.updates((c.source as Cell<DOMSource>).map(lambda1(() => [c],[c.source as Cell<DOMSource>]))))
+            .reduce((a,b) => a.merge(b, concat)))
+        .map(calm);
+
+    function concat<S>(a: S[], b: S[]) {
+        return a.concat(b)
+    }
+    
+    function calm(components: jsxmlComponent[]) {
+        return components.filter((c,i,a) => a.every((a,j) => i === j || !a.isAncestorOf(c)))
+    }
+
 }
+
