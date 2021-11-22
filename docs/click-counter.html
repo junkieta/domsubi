@@ -2,51 +2,20 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <title>クリックカウンターのサンプル - domsubi</title>
+        <title>クリックカウンター - domsubi sample</title>
         <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/obsidian.min.css">
         <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
         <script type="text/javascript" src="./domsubi.umd.js"></script>
         <script type="text/javascript">
-            document.addEventListener(
-                'DOMContentLoaded',
-                () => document.querySelectorAll('pre code').forEach((el) => hljs.highlightElement(el))
-            );
+            document.addEventListener('DOMContentLoaded',
+                () => document.querySelectorAll('pre code').forEach((el) => hljs.highlightElement(el)));
         </script>
-        <style>
-        var { font-size: x-large; }
-        </style>
     </head>
     <body>
-        <header><h1>クリックカウンターのサンプル</h1></header>
-<pre><code class="language-javascript">const {jshtml,StreamSink} = domsubi;
-const targetNode = document.getElementById('click-counter-sample');
-
-// クリックイベント取得用Stream
-const sClicked = new StreamSink();
-// クリックイベントをカウントするCell
-const countClicked = sClicked.accum(0, (u,n) => n + 1);
-// クリック5回毎に"red", でなければ"black"を返すCell
-const varColor = countClicked.map((n) => n % 5 ? 'black' : 'red');
-// click回数を表示するVAR要素
-const countClickedVar = {
-    var: countClicked,
-    $: {
-        style: {
-            color: varColor,
-            fontSize: 'x-large'
-        }
-    }
-};
-// 全体
-const contents = new jshtml([
-    { button: 'クリックよろしく!!', $: { onclick: sClicked } },
-    { p: ['君は ', countClickedVar, ' 回クリックしている'] }
-]);
-contents.mount(targetNode);</code></pre>
+        <h1>クリックカウンター by domsubi</h1>
         <script id="click-counter-sample">
-            const {jshtml,StreamSink} = domsubi
-
             const targetNode = document.getElementById('click-counter-sample');
+            const {jshtml,StreamSink} = domsubi
 
             // クリックイベント取得用Stream
             const sClicked = new StreamSink();
@@ -71,6 +40,80 @@ contents.mount(targetNode);</code></pre>
             ]);
             contents.mount(targetNode);
         </script>
+        <hr />
+        <section>
+            <h2>実装例 / 関数型コード</h2>
+            <ul>
+                <li><code>button</code>要素のクリックイベントをStream化する</li>
+                <li>クリックイベントの<code>Stream</code>から回数を計上する<code>Cell</code>を生成する</li>
+                <li>クリック回数の<code>Cell</code>を組み込んだ<code>p</code>要素を生成する</li>
+            </ul>
+            <pre><code class="language-javascript">const {jshtml,StreamSink} = domsubi;
+    
+// クリックイベント取得用Stream
+const sClicked = new StreamSink();
+
+// クリックイベントをカウントするCell
+const countClicked = sClicked.accum(0, (u,n) => n + 1);
+
+// クリック5回毎に"red", でなければ"black"を返すCell
+const varColor = countClicked.map((n) => n % 5 ? 'black' : 'red');
+
+// click回数を表示するVAR要素
+const countClickedVar = {
+    var: countClicked,
+    $: {
+        style: {
+            color: varColor,
+            fontSize: 'x-large'
+        }
+    }
+};
+
+// DOM全体
+const contents = new jshtml([
+    { button: 'クリックよろしく!!', $: { onclick: sClicked } },
+    { p: ['君は ', countClickedVar, ' 回クリックしている'] }
+]);
+
+// マウント先へ
+contents.mount(targetNode);</code></pre>
+        </section>
+        <section>
+            <h2>実装例 / カスタム要素利用コード</h2>
+            <p>必要なコードはカスタム要素のコンストラクタに。</p>
+            <pre><code class="language-javascript">const {jshtmlElement} = domsubi
+class ClickCounterElement extends jshtmlElement {
+
+    constructor() {
+        super();
+
+        // クリックイベント取得用Stream
+        const sClicked = new StreamSink();
+
+        // クリックイベントをカウントするCell
+        const countClicked = sClicked.accum(0, (u,n) => n + 1);
+        
+        // CSSカスタムプロパティの宣言
+        this.cssVars = {
+            // クリック5回毎に"red", でなければ"black"を返すCell
+            varColor: countClicked.map((n) => n % 5 ? 'black' : 'red')
+        };
+
+        // shadowDOMの中身をjshtmlで宣言
+        this.shadowSource = [
+            { style: 'var { font-size: x-large; color: var(--varColor); }' },
+            { button: 'クリックよろしく!!', $: { onclick: sClicked } },
+            { p: ['君は ', { var: countClicked }, ' 回クリックしている'] }
+        ];
+    }
+
+}
+customElements.define('click-counter', ClickCounterElement);
+
+// &lt;click-counter&gt;&lt;/click-counter&gt;
+</code></pre>
+        <section>
         <footer><address><a href="./">junkieta/domsubi example</a></address></footer>
     </body>
 </html>

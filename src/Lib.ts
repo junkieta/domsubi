@@ -6,3 +6,4 @@ export {jsxmlAttributes} from "./domsubi/jsxmlAttributes";
 export {jshtmlDatasetValue} from "./domsubi/jshtmlDataset";
 export {jshtmlInlineStyleRule} from "./domsubi/jshtmlInlineStyleRule";
 export {jsxml,jshtml,attributes,events,mutations,wrap} from "./domsubi/helpers";
+export {jshtmlElement} from "./domsubi/jshtmlElement";
