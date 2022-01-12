@@ -1,13 +1,9 @@
 import { Cell, CellSink, StreamSink } from "sodiumjs";
 import { jshtml } from "./jshtml";
-import { EventStreamMap, NodeSource } from "./types";
+import { CustomCSSVariables, EventStreamMap, NodeSource } from "./types";
 
 type AttrCells = {
     [key:string]: Cell<string>
-}
-
-type CustomCSSVariables = {
-    [key:string]: string | Cell<string>
 }
 
 interface jshtmlElementConstructor {
@@ -40,7 +36,7 @@ export abstract class jshtmlElement extends HTMLElement {
     /**
      * CSSカスタムプロパティのリスト。ShadowDOMのスタイルで使いたい変数を設定する。変数名であることを示す二重ハイフン(--)は不要。
      */
-    cssVars?: CustomCSSVariables
+    cssVars?: CustomCSSVariables | Cell<CustomCSSVariables>
 
     /**
      * connected / disconnectedに合わせてShadowRootからmount / unmountする。
@@ -74,9 +70,11 @@ export abstract class jshtmlElement extends HTMLElement {
             observedShadowEvents.forEach((e) => shadow.addEventListener(e, l));
         }
 
-        const mounter = new jshtml(this.cssVars
-            ? [{ style: expandCustomCSSVariables(this.cssVars) }, this.shadowSource]
-            : this.shadowSource);
+        const mounter = new jshtml(typeof this.cssVars !== 'object'
+            ? this.shadowSource
+            : [{ style: this.cssVars instanceof Cell
+                ? this.cssVars.map(expandCustomCSSVariables)
+                : expandCustomCSSVariables(this.cssVars) }, this.shadowSource]);
 
         this._mount = () => {
             this._unmount();
@@ -99,9 +97,9 @@ export abstract class jshtmlElement extends HTMLElement {
 }
 
 function expandCustomCSSVariables(vars: CustomCSSVariables) : NodeSource {
-   const rules = Object.keys(vars)
-       .map((n) => vars[n] instanceof Cell ? [`--${n}:`, vars[n], ';'] : `--${n}: ${vars[n]};`)
-   return [':host {', rules ,'}']
-    .flat();
+    const rules = Object.keys(vars)
+        .map((n) => vars[n] instanceof Cell ? [`--${n}:`, vars[n], ';'] : `--${n}: ${vars[n]};`)
+    return [':host {', rules ,'}']
+        .flat();
 }
 

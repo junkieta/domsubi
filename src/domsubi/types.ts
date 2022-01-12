@@ -261,3 +261,9 @@ export type FRPV<V> = Promise<V> | Cell<V> | Stream<V>;
 
 export type DOMSource =
     NodeSource | AttrSource | AttrValue | StyleSource | DatasetSource;
+
+export type CustomCSSVariables = {
+    [key:string]: string | Cell<string>
+};
+
+    
