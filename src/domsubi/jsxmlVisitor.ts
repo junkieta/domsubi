@@ -78,7 +78,7 @@ export class jsxmlVisitor implements jsxmlComponentVisitor {
 
         this.buildNode(o.source, df);
         // リファレンス更新
-        o.reference.splice(0,2, ...(df.childNodes.length === 2 ? [df.firstChild,df.lastChild] : [df.firstChild]) as Node[]);
+        o.reference.splice(0,2, ...(df.childNodes.length > 1 ? [df.firstChild,df.lastChild] : [df.firstChild]) as Node[]);
 
         if(!b) a.parentNode!.replaceChild(df, a);
 

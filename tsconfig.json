@@ -11,10 +11,10 @@
     "outDir": "dist/lib",
     "baseUrl": ".",
     "declaration": true,
-    "declarationDir": "dist/typings/"
-  },
-  "paths": {
-    "sodiumjs": ["node_modules/sodiumjs/src/lib/Lib.ts"]
+    "declarationDir": "dist/typings/",
+    "paths": {
+      "sodiumjs": ["node_modules/sodiumjs/src/lib/Lib.ts"]
+    },
   },
   "exclude": [
     "node_modules",
