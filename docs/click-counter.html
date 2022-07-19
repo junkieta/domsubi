@@ -14,8 +14,10 @@
     <body>
         <h1>クリックカウンター by domsubi</h1>
         <script id="click-counter-sample">
+            const jshtml = domsubi.jshtml;
+            const StreamSink = domsubi.Sodium.StreamSink;
+
             const targetNode = document.getElementById('click-counter-sample');
-            const {jshtml,StreamSink} = domsubi
 
             // クリックイベント取得用Stream
             const sClicked = new StreamSink();
@@ -48,7 +50,8 @@
                 <li>クリックイベントの<code>Stream</code>から回数を計上する<code>Cell</code>を生成する</li>
                 <li>クリック回数の<code>Cell</code>を組み込んだ<code>p</code>要素を生成する</li>
             </ul>
-            <pre><code class="language-javascript">const {jshtml,StreamSink} = domsubi;
+            <pre><code class="language-javascript">const jshtml = domsubi.jshtml;
+const StreamSink = domsubi.Sodium.StreamSink;
     
 // クリックイベント取得用Stream
 const sClicked = new StreamSink();
