@@ -4,7 +4,7 @@
 # domsubi
 ブラウザ側のDOM更新をFRPで処理するためのライブラリ。前提として[sodium-typescript](https://github.com/SodiumFRP/sodium-typescript/)を利用する。
 
-ヴァーチャルDOM実装でもあるが、facebook-reactのJSXとは異なるjavascriptのオブジェクトリテラルを活かした記法([jshtml記法](#jshtml%E8%A8%98%E6%B3%95%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6))を採用。
+ヴァーチャルDOM実装でもあるが、facebook-reactのJSXとは異なるjavascriptのオブジェクトリテラルを活かしたjshtml記法を採用。
 
 名称はdomsubi = DOM-MUSUBI、DOMのおむすび。sodium(塩)を核にしてDOMを管理するところから。
 
